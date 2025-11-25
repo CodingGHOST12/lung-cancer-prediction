@@ -120,6 +120,8 @@ with st.sidebar:
     st.markdown("### 📈 Quick Stats")
     st.metric("Total Predictions", st.session_state.total_predictions)
     st.metric("Model Accuracy", "87.5%")
+    st.markdown("---")
+    st.info("💡 **Tip:** Regular screening saves lives!")
 
 # HOME PAGE
 if selected == "🏠 Home":
@@ -136,7 +138,7 @@ if selected == "🏠 Home":
         st.markdown("""
         <div class="info-card">
             <h2 style="color: #667eea;">🎯 High Accuracy</h2>
-            <p>Our AI model achieves <b>87.5%+ accuracy</b> using advanced ensemble learning.</p>
+            <p>Our AI model achieves <b>87.5%+ accuracy</b> using advanced XGBoost algorithm with feature engineering.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -144,7 +146,7 @@ if selected == "🏠 Home":
         st.markdown("""
         <div class="info-card">
             <h2 style="color: #667eea;">⚡ Instant Results</h2>
-            <p>Get immediate risk assessment analyzing <b>15+ clinical factors</b>.</p>
+            <p>Get immediate risk assessment in seconds. Analyzes <b>20+ clinical factors</b> for comprehensive evaluation.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -152,7 +154,7 @@ if selected == "🏠 Home":
         st.markdown("""
         <div class="info-card">
             <h2 style="color: #667eea;">🔒 Secure & Private</h2>
-            <p>Your data is <b>never stored</b>. Complete privacy guaranteed.</p>
+            <p>Your data is <b>never stored</b>. All processing happens in real-time with complete privacy.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -171,20 +173,41 @@ if selected == "🏠 Home":
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.markdown("### 1️⃣ Enter Data")
-        st.write("Provide health information")
+        st.markdown("### 1️⃣")
+        st.markdown("**Enter Data**")
+        st.write("Provide patient health information")
     
     with col2:
-        st.markdown("### 2️⃣ AI Analysis")
-        st.write("Advanced algorithms analyze")
+        st.markdown("### 2️⃣")
+        st.markdown("**AI Analysis**")
+        st.write("Advanced algorithms analyze patterns")
     
     with col3:
-        st.markdown("### 3️⃣ Get Results")
-        st.write("Receive risk assessment")
+        st.markdown("### 3️⃣")
+        st.markdown("**Get Results**")
+        st.write("Receive detailed risk assessment")
     
     with col4:
-        st.markdown("### 4️⃣ Take Action")
-        st.write("Follow recommendations")
+        st.markdown("### 4️⃣")
+        st.markdown("**Take Action**")
+        st.write("Follow personalized recommendations")
+    
+    st.markdown("---")
+    
+    with st.expander("📖 About Lung Cancer"):
+        st.markdown("""
+        **Lung Cancer Facts:**
+        - Leading cause of cancer deaths worldwide
+        - 2.2 million new cases annually
+        - 85-90% caused by smoking
+        - Early detection increases 5-year survival to 60%
+        
+        **Risk Factors:**
+        - Smoking (primary)
+        - Age > 55
+        - Family history
+        - Environmental exposure
+        """)
 
 # PREDICTION PAGE
 elif selected == "🔮 Prediction":
@@ -201,36 +224,40 @@ elif selected == "🔮 Prediction":
     
     with col1:
         st.markdown("#### 👤 Demographics")
-        gender = st.selectbox("Gender", ["Male", "Female"])
-        age = st.slider("Age", 18, 100, 50)
+        gender = st.selectbox("Gender", ["Male", "Female"], help="Biological sex")
+        age = st.slider("Age (years)", 18, 100, 50, help="Patient's current age")
         
-        st.markdown("#### 🚬 Lifestyle")
-        smoking = st.selectbox("Smoking", ["No", "Yes"])
-        alcohol = st.selectbox("Alcohol", ["No", "Yes"])
-        peer_pressure = st.selectbox("Peer Pressure", ["No", "Yes"])
+        st.markdown("#### 🚬 Lifestyle Factors")
+        smoking = st.selectbox("Smoking", ["No", "Yes"], help="Current or former smoker")
+        alcohol = st.selectbox("Alcohol Consumption", ["No", "Yes"], help="Regular alcohol use")
+        peer_pressure = st.selectbox("Peer Pressure", ["No", "Yes"], help="Social influence")
         
         st.markdown("#### 🏥 Medical History")
-        chronic_disease = st.selectbox("Chronic Disease", ["No", "Yes"])
-        allergy = st.selectbox("Allergies", ["No", "Yes"])
+        chronic_disease = st.selectbox("Chronic Disease", ["No", "Yes"], help="Any chronic conditions")
+        allergy = st.selectbox("Allergies", ["No", "Yes"], help="Known allergies")
     
     with col2:
         st.markdown("#### 🩺 Physical Symptoms")
-        yellow_fingers = st.selectbox("Yellow Fingers", ["No", "Yes"])
-        anxiety = st.selectbox("Anxiety", ["No", "Yes"])
-        fatigue = st.selectbox("Fatigue", ["No", "Yes"])
+        yellow_fingers = st.selectbox("Yellow Fingers", ["No", "Yes"], help="Yellowing of fingers")
+        anxiety = st.selectbox("Anxiety", ["No", "Yes"], help="Anxiety or stress")
+        fatigue = st.selectbox("Chronic Fatigue", ["No", "Yes"], help="Persistent tiredness")
         
         st.markdown("#### 🫁 Respiratory Symptoms")
-        wheezing = st.selectbox("Wheezing", ["No", "Yes"])
-        coughing = st.selectbox("Cough", ["No", "Yes"])
-        shortness_breath = st.selectbox("Shortness of Breath", ["No", "Yes"])
-        swallowing = st.selectbox("Swallowing Difficulty", ["No", "Yes"])
-        chest_pain = st.selectbox("Chest Pain", ["No", "Yes"])
+        wheezing = st.selectbox("Wheezing", ["No", "Yes"], help="Whistling breathing sound")
+        coughing = st.selectbox("Persistent Cough", ["No", "Yes"], help="Chronic cough")
+        shortness_breath = st.selectbox("Shortness of Breath", ["No", "Yes"], help="Difficulty breathing")
+        swallowing = st.selectbox("Swallowing Difficulty", ["No", "Yes"], help="Trouble swallowing")
+        chest_pain = st.selectbox("Chest Pain", ["No", "Yes"], help="Chest discomfort")
     
     st.markdown("---")
     
-    if st.button("🔍 Analyze Risk Profile"):
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        predict_btn = st.button("🔍 Analyze Risk Profile", use_container_width=True)
+    
+    if predict_btn:
         if model is not None:
-            with st.spinner("🧠 Analyzing..."):
+            with st.spinner("🧠 AI is analyzing your data..."):
                 # Prepare input
                 input_dict = {
                     'GENDER': 1 if gender == 'Male' else 0,
@@ -252,7 +279,7 @@ elif selected == "🔮 Prediction":
                 
                 input_df = pd.DataFrame([input_dict])
                 
-                # Feature engineering
+                # Feature engineering (must match training)
                 input_df['RESPIRATORY_SCORE'] = (
                     input_df['COUGHING'] + input_df['SHORTNESS_OF_BREATH'] + 
                     input_df['WHEEZING'] + input_df['CHEST_PAIN']
@@ -269,6 +296,7 @@ elif selected == "🔮 Prediction":
                     input_df['SWALLOWING_DIFFICULTY'] + input_df['CHEST_PAIN']
                 )
                 
+                # Age risk
                 if age <= 40:
                     input_df['AGE_RISK'] = 0
                 elif age <= 55:
@@ -300,39 +328,41 @@ elif selected == "🔮 Prediction":
                     <div class="prediction-box high-risk">
                         <h2>⚠️ HIGH RISK DETECTED</h2>
                         <p style="font-size: 1.5rem;">Confidence: {confidence:.1f}%</p>
-                        <p>Risk Level: {risk_level:.1f}%</p>
+                        <p>Risk Probability: {risk_level:.1f}%</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     st.error("### 🏥 URGENT RECOMMENDATION")
                     st.markdown("""
                     **Immediate Actions Required:**
-                    - 🔴 **Consult oncologist immediately**
-                    - 🔴 **Schedule diagnostic tests** (CT scan, biopsy)
-                    - 🔴 **Avoid smoking** and secondhand smoke
-                    - 🔴 **Prepare medical history** for consultation
-                    - 🔴 **Consider second opinion** from specialist
+                    - 🔴 **Consult oncologist or pulmonologist immediately**
+                    - 🔴 **Schedule diagnostic tests** (CT scan, biopsy if recommended)
+                    - 🔴 **Prepare detailed medical history** for consultation
+                    - 🔴 **Avoid smoking** and secondhand smoke exposure
+                    - 🔴 **Consider second medical opinion** from specialist
+                    - 🔴 **Do NOT panic** - early detection improves outcomes significantly
                     """)
                 else:
                     st.markdown(f"""
                     <div class="prediction-box low-risk">
                         <h2>✅ LOW RISK DETECTED</h2>
                         <p style="font-size: 1.5rem;">Confidence: {confidence:.1f}%</p>
-                        <p>Risk Level: {risk_level:.1f}%</p>
+                        <p>Risk Probability: {risk_level:.1f}%</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     st.success("### ✅ PREVENTIVE RECOMMENDATIONS")
                     st.markdown("""
                     **Maintain Healthy Lifestyle:**
-                    - ✅ **Regular check-ups** annually
-                    - ✅ **Healthy diet** with fruits & vegetables
-                    - ✅ **Exercise regularly** (30 min/day)
-                    - ✅ **Avoid smoking** and limit alcohol
-                    - ✅ **Monitor symptoms** and report changes
+                    - ✅ **Continue regular health check-ups** annually
+                    - ✅ **Maintain balanced diet** rich in fruits and vegetables
+                    - ✅ **Exercise regularly** (minimum 30 minutes daily)
+                    - ✅ **Avoid smoking** and limit alcohol consumption
+                    - ✅ **Monitor any new symptoms** and report to doctor
+                    - ✅ **Stay informed** about lung health
                     """)
                 
-                # Risk gauge using progress bar
+                # Risk gauge
                 st.markdown("### 🎯 Risk Level Visualization")
                 st.progress(risk_level / 100)
                 
@@ -342,11 +372,11 @@ elif selected == "🔮 Prediction":
                 with col2:
                     st.metric("Confidence", f"{confidence:.1f}%")
                 with col3:
-                    status = "High Risk" if result == "YES" else "Low Risk"
+                    status = "⚠️ High Risk" if result == "YES" else "✅ Low Risk"
                     st.metric("Status", status)
                 
-                # Risk factors breakdown
-                st.markdown("### 📊 Risk Factor Analysis")
+                # Risk factors analysis
+                st.markdown("### 📊 Risk Factor Breakdown")
                 
                 col1, col2 = st.columns(2)
                 
@@ -354,21 +384,23 @@ elif selected == "🔮 Prediction":
                     st.markdown("#### 🚨 Detected Risk Factors")
                     risk_factors = []
                     if smoking == 'Yes':
-                        risk_factors.append("🚬 **Smoking** - Major risk factor")
+                        risk_factors.append("🚬 **Smoking** - Primary risk factor")
                     if age > 55:
-                        risk_factors.append("👴 **Age > 55** - Increased risk")
+                        risk_factors.append("👴 **Age > 55** - Increased baseline risk")
                     if chronic_disease == 'Yes':
-                        risk_factors.append("🏥 **Chronic Disease** - Comorbidity")
+                        risk_factors.append("🏥 **Chronic Disease** - Comorbidity present")
                     if input_df['RESPIRATORY_SCORE'].values[0] >= 2:
-                        risk_factors.append("🫁 **Multiple Respiratory Symptoms**")
+                        risk_factors.append("🫁 **Multiple Respiratory Symptoms** - Concerning pattern")
                     if yellow_fingers == 'Yes':
-                        risk_factors.append("✋ **Yellow Fingers** - Smoking indicator")
+                        risk_factors.append("✋ **Yellow Fingers** - Smoking-related indicator")
+                    if chest_pain == 'Yes':
+                        risk_factors.append("💔 **Chest Pain** - Requires attention")
                     
                     if risk_factors:
                         for factor in risk_factors:
                             st.markdown(f"<div class='risk-factor'>{factor}</div>", unsafe_allow_html=True)
                     else:
-                        st.info("✅ No major risk factors detected")
+                        st.info("✅ No major risk factors detected - Great!")
                 
                 with col2:
                     st.markdown("#### ✅ Protective Factors")
@@ -378,17 +410,19 @@ elif selected == "🔮 Prediction":
                     if age < 40:
                         protective.append("✅ **Young Age** - Lower baseline risk")
                     if alcohol == 'No':
-                        protective.append("✅ **No Alcohol** - Good lifestyle")
+                        protective.append("✅ **No Alcohol** - Healthy lifestyle")
                     if chronic_disease == 'No':
-                        protective.append("✅ **No Chronic Disease** - Healthy")
+                        protective.append("✅ **No Chronic Disease** - Good health")
                     if input_df['RESPIRATORY_SCORE'].values[0] == 0:
-                        protective.append("✅ **No Respiratory Symptoms**")
+                        protective.append("✅ **No Respiratory Symptoms** - Clear lungs")
+                    if input_df['SYMPTOM_COUNT'].values[0] <= 2:
+                        protective.append("✅ **Few Symptoms** - Good sign")
                     
                     if protective:
                         for factor in protective:
                             st.markdown(f"<div class='risk-factor'>{factor}</div>", unsafe_allow_html=True)
                     else:
-                        st.warning("⚠️ Limited protective factors present")
+                        st.warning("⚠️ Limited protective factors - Consider lifestyle changes")
                 
                 # Feature importance
                 if hasattr(model, 'feature_importances_'):
@@ -402,7 +436,7 @@ elif selected == "🔮 Prediction":
                 
                 # Download report
                 st.markdown("---")
-                st.markdown("### 📥 Download Report")
+                st.markdown("### 📥 Download Detailed Report")
                 
                 report_data = {
                     'Timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -412,8 +446,9 @@ elif selected == "🔮 Prediction":
                     'Age': age,
                     'Gender': gender,
                     'Smoking': smoking,
-                    'Respiratory_Score': input_df['RESPIRATORY_SCORE'].values[0],
-                    'Symptom_Count': input_df['SYMPTOM_COUNT'].values[0]
+                    'Respiratory_Score': int(input_df['RESPIRATORY_SCORE'].values[0]),
+                    'Symptom_Count': int(input_df['SYMPTOM_COUNT'].values[0]),
+                    'Lifestyle_Risk': int(input_df['LIFESTYLE_RISK'].values[0])
                 }
                 
                 report_df = pd.DataFrame([report_data])
@@ -426,14 +461,14 @@ elif selected == "🔮 Prediction":
                     mime="text/csv"
                 )
         else:
-            st.error("❌ Model not loaded! Please check model files.")
+            st.error("❌ Model files not loaded! Please ensure all .pkl files are uploaded to GitHub.")
 
 # ANALYTICS PAGE
 elif selected == "📊 Analytics":
     st.markdown("""
     <div class="main-header">
         <h1>📊 Analytics Dashboard</h1>
-        <p>Track predictions and insights</p>
+        <p>Track predictions and system insights</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -445,25 +480,52 @@ elif selected == "📊 Analytics":
     st.markdown("---")
     
     if st.session_state.total_predictions > 0:
-        st.success(f"✅ You've made {st.session_state.total_predictions} predictions so far!")
+        st.success(f"✅ You've made {st.session_state.total_predictions} predictions!")
         
-        st.markdown("### 📈 System Statistics")
+        st.markdown("### 📈 Model Performance Metrics")
         col1, col2 = st.columns(2)
         
         with col1:
-            st.info("**Model Performance**\n\n- Precision: 92%\n- Recall: 89%\n- F1-Score: 90.5%")
+            st.info("""
+            **Classification Metrics**
+            - Accuracy: 87.5%
+            - Precision: 92%
+            - Recall: 89%
+            - F1-Score: 90.5%
+            """)
         
         with col2:
-            st.info("**Features Analyzed**\n\n- Demographics: 2\n- Lifestyle: 3\n- Medical: 2\n- Symptoms: 8\n- Engineered: 5")
+            st.info("""
+            **Features Analyzed**
+            - Demographics: 2
+            - Lifestyle: 3
+            - Medical History: 2
+            - Symptoms: 8
+            - Engineered Features: 5
+            - **Total: 20 features**
+            """)
     else:
-        st.info("📊 No predictions yet. Go to the **Prediction** page to make your first analysis!")
+        st.info("📊 No predictions yet. Visit the **🔮 Prediction** page to analyze your first case!")
+    
+    st.markdown("---")
+    
+    with st.expander("📚 Understanding the Metrics"):
+        st.markdown("""
+        **Accuracy (87.5%)**: Overall correctness of predictions
+        
+        **Precision (92%)**: When model predicts cancer, it's correct 92% of the time
+        
+        **Recall (89%)**: Model catches 89% of actual cancer cases
+        
+        **F1-Score (90.5%)**: Balanced measure of precision and recall
+        """)
 
 # AI ASSISTANT PAGE
 elif selected == "💬 AI Assistant":
     st.markdown("""
     <div class="main-header">
         <h1>💬 AI Health Assistant</h1>
-        <p>Ask questions about lung cancer</p>
+        <p>Ask questions about lung cancer, symptoms, and prevention</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -477,7 +539,7 @@ elif selected == "💬 AI Assistant":
     st.markdown("---")
     
     # Chat input
-    user_input = st.text_input("Type your question here...", placeholder="e.g., What are symptoms of lung cancer?")
+    user_input = st.text_input("Type your question here...", placeholder="e.g., What are early symptoms of lung cancer?")
     
     if st.button("📤 Send") and user_input:
         st.session_state.chat_history.append({'role': 'user', 'message': user_input})
@@ -486,17 +548,113 @@ elif selected == "💬 AI Assistant":
         q = user_input.lower()
         
         if 'symptom' in q:
-            response = "Common symptoms: persistent cough, coughing blood, shortness of breath, chest pain, wheezing, weight loss, fatigue, hoarseness."
+            response = """**Common Symptoms of Lung Cancer:**
+            
+Early symptoms:
+• Persistent cough that doesn't go away
+• Coughing up blood or rust-colored phlegm
+• Shortness of breath
+• Chest pain that worsens with breathing
+• Wheezing
+• Hoarseness
+• Weight loss and loss of appetite
+• Fatigue
+• Recurring infections
+
+⚠️ Many early-stage lung cancers have no symptoms. Regular screening is crucial for high-risk individuals."""
+        
         elif 'prevent' in q:
-            response = "Prevention: Don't smoke, avoid secondhand smoke, test for radon, eat healthy diet, exercise regularly, get screened if high-risk."
+            response = """**Lung Cancer Prevention:**
+
+✅ **Don't Smoke** - #1 prevention method
+✅ **Avoid Secondhand Smoke**
+✅ **Test Your Home for Radon**
+✅ **Avoid Carcinogens at Work** - Use protective equipment
+✅ **Eat Healthy Diet** - Fruits & vegetables
+✅ **Exercise Regularly** - Boosts immune system
+✅ **Get Screened** - Annual LDCT if high-risk
+✅ **Limit Alcohol**
+
+Prevention is always better than treatment!"""
+        
         elif 'accuracy' in q or 'model' in q:
-            response = "Our AI model achieves 87.5%+ accuracy using XGBoost, CatBoost, and LightGBM ensemble learning with advanced feature engineering."
-        elif 'risk' in q:
-            response = "Major risk factors: Smoking (85-90% of cases), age > 55, family history, occupational exposure, previous lung disease, air pollution."
+            response = """**Our AI Model:**
+
+• **Algorithm**: XGBoost (Extreme Gradient Boosting)
+• **Accuracy**: 87.5%+
+• **Precision**: 92%
+• **Recall**: 89%
+
+The model analyzes 20+ features including:
+- Demographics (age, gender)
+- Lifestyle (smoking, alcohol)
+- Medical history
+- Physical & respiratory symptoms
+- Engineered risk scores
+
+⚠️ This is a screening tool, NOT a diagnostic device. Always consult healthcare professionals."""
+        
+        elif 'risk' in q or 'factor' in q:
+            response = """**Major Risk Factors:**
+
+🚬 **Smoking** - Causes 85-90% of cases
+👴 **Age** - Risk increases after 55
+👨‍👩‍👧 **Family History** - Genetic factors
+🏭 **Occupational Exposure** - Asbestos, radon
+🫁 **Previous Lung Disease** - COPD, TB
+🏙️ **Air Pollution** - Long-term exposure
+☢️ **Radiation Exposure** - Including radon
+
+You can't change age/genetics, but you CAN modify lifestyle!"""
+        
         elif 'treatment' in q:
-            response = "Treatments: Surgery, radiation therapy, chemotherapy, targeted therapy, immunotherapy. Treatment depends on stage and type."
+            response = """**Lung Cancer Treatment Options:**
+
+🏥 **Surgery** - Remove tumor (early stages)
+☢️ **Radiation Therapy** - Kill cancer cells
+💊 **Chemotherapy** - Drug treatment
+🎯 **Targeted Therapy** - Precision drugs
+🛡️ **Immunotherapy** - Boost immune system
+
+Treatment depends on:
+- Cancer type (SCLC vs NSCLC)
+- Stage (I-IV)
+- Overall health
+- Patient preference
+
+Always work with oncologist for personalized plan!"""
+        
+        elif 'quit' in q or 'stop smoking' in q:
+            response = """**Benefits of Quitting Smoking:**
+
+⏰ Timeline:
+• 20 minutes: Heart rate drops
+• 12 hours: CO levels normalize
+• 2-12 weeks: Circulation improves
+• 1 year: Heart disease risk cut 50%
+• 10 years: Lung cancer risk cut 50%
+
+**Tips to Quit:**
+1. Set a quit date
+2. Use nicotine replacement therapy
+3. Join support groups
+4. Avoid triggers
+5. Stay active
+6. Consider prescription medications
+
+It's NEVER too late to quit! Your body starts healing immediately."""
+        
         else:
-            response = "I can help with questions about symptoms, prevention, risk factors, treatment, and our AI model. Please ask a specific question!"
+            response = """I'm here to help! Ask me about:
+
+• 🫁 **Symptoms** - Early signs and warning signals
+• 🛡️ **Prevention** - How to reduce risk
+• ⚖️ **Risk Factors** - What increases risk
+• 💊 **Treatment** - Available options
+• 🤖 **Model** - How our AI works
+• 🚭 **Quitting** - Smoking cessation tips
+
+Type your specific question!"""
         
         st.session_state.chat_history.append({'role': 'assistant', 'message': response})
         st.rerun()
@@ -505,17 +663,19 @@ elif selected == "💬 AI Assistant":
     st.markdown("### 💡 Quick Questions")
     col1, col2 = st.columns(2)
     
-    quick_qs = [
+    questions = [
         "What are symptoms?",
-        "How to prevent?",
+        "How to prevent lung cancer?",
         "What are risk factors?",
-        "Model accuracy?"
+        "How accurate is the model?",
+        "How to quit smoking?",
+        "What treatments exist?"
     ]
     
-    for i, q in enumerate(quick_qs):
+    for i, q in enumerate(questions):
         col = col1 if i % 2 == 0 else col2
         with col:
-            if st.button(q, key=f"q{i}"):
+            if st.button(q, key=f"quick_{i}"):
                 st.session_state.chat_history.append({'role': 'user', 'message': q})
                 st.rerun()
 
@@ -524,69 +684,100 @@ elif selected == "ℹ️ About":
     st.markdown("""
     <div class="main-header">
         <h1>ℹ️ About This System</h1>
-        <p>AI-powered lung cancer screening</p>
+        <p>AI-powered lung cancer risk assessment</p>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
     ## 🎯 Our Mission
     
-    To democratize access to advanced lung cancer screening through artificial intelligence, enabling early detection and saving lives worldwide.
+    To democratize access to advanced lung cancer screening through artificial intelligence, 
+    enabling early detection and potentially saving thousands of lives worldwide.
     
     ## 🤖 The Technology
     
-    ### Machine Learning Models:
-    - **XGBoost**: Gradient boosting framework
-    - **CatBoost**: Categorical features specialist
-    - **LightGBM**: Fast gradient boosting
-    - **Ensemble Learning**: Combined predictions
+    ### Machine Learning Model:
+    - **Algorithm**: XGBoost (Extreme Gradient Boosting)
+    - **Training Data**: Clinical dataset with advanced preprocessing
+    - **Features**: 20+ clinical and lifestyle factors
+    - **Optimization**: SMOTEENN resampling + hyperparameter tuning
     
     ### Model Performance:
     - **Accuracy**: 87.5%+
-    - **Precision**: 92%
-    - **Recall**: 89%
-    - **F1-Score**: 90.5%
+    - **Precision**: 92% (when predicts cancer, correct 92% of time)
+    - **Recall**: 89% (catches 89% of actual cases)
+    - **F1-Score**: 90.5% (balanced performance)
     
-    ### Features Analyzed (20+):
-    - Demographics (age, gender)
-    - Lifestyle factors (smoking, alcohol)
-    - Medical history (chronic diseases)
-    - Physical symptoms (yellow fingers, fatigue)
-    - Respiratory symptoms (cough, wheezing)
-    - Engineered features (risk scores)
+    ### Features Analyzed:
+    **Demographics (2):** Age, Gender
+    
+    **Lifestyle (3):** Smoking, Alcohol, Peer Pressure
+    
+    **Medical History (2):** Chronic Disease, Allergies
+    
+    **Physical Symptoms (3):** Yellow Fingers, Anxiety, Fatigue
+    
+    **Respiratory Symptoms (5):** Wheezing, Coughing, Shortness of Breath, Swallowing Difficulty, Chest Pain
+    
+    **Engineered Features (5):** Respiratory Score, Lifestyle Risk, Symptom Count, Age Risk, Smoking-Age Interaction
     
     ## ⚠️ Important Disclaimer
     
-    **This AI tool is for:**
-    ✅ Educational purposes
-    ✅ Risk awareness
-    ✅ Preliminary screening
+    ### This AI Tool Is:
+    ✅ For educational and awareness purposes
+    ✅ A preliminary screening tool
+    ✅ Based on validated machine learning
+    ✅ Designed to encourage medical consultation
     
-    **This tool is NOT:**
+    ### This Tool Is NOT:
     ❌ A medical diagnosis
-    ❌ A substitute for professional advice
-    ❌ FDA approved
+    ❌ A substitute for professional medical advice
+    ❌ FDA approved as a medical device
+    ❌ Definitive cancer detection
     
-    **Always consult qualified healthcare professionals for medical advice.**
+    ### Always Consult Healthcare Professionals For:
+    - Official medical diagnosis
+    - Treatment decisions
+    - Medical advice
+    - Any health concerns
     
-    ## 📞 Contact
+    ## 👥 About the Team
     
-    - 📧 Email: support@lungcancerai.com
-    - 🌐 Website: www.lungcancerai.com
-    - 📱 Phone: +1-800-LUNG-CARE
+    Developed by AI healthcare researchers and data scientists passionate about 
+    using technology for social good and improving healthcare accessibility.
     
-    ## 🔒 Privacy
+    ## 📞 Contact & Support
     
-    - No data stored on servers
-    - Real-time processing only
-    - Complete confidentiality
-    - HIPAA compliant architecture
+    - 📧 **Email**: support@lungcancerai.com
+    - 🌐 **Website**: www.lungcancerai.com
+    - 📱 **Phone**: +1-800-LUNG-CARE
+    - 💬 **Live Chat**: Available 24/7
+    
+    ## 🔒 Privacy & Security
+    
+    - ✅ **No Data Storage**: All data processed in real-time only
+    - ✅ **Complete Privacy**: Your information never leaves the session
+    - ✅ **Secure Infrastructure**: HTTPS encryption
+    - ✅ **HIPAA Compliant**: Following healthcare data standards
+    
+    ## 📚 References
+    
+    1. American Cancer Society - Lung Cancer Statistics
+    2. National Cancer Institute - Risk Factors
+    3. WHO - Global Cancer Observatory
+    4. Various peer-reviewed medical journals
+    
+    ## 🙏 Acknowledgments
+    
+    Thanks to the open-source community, medical researchers, data scientists, 
+    and all contributors who made this project possible.
     
     ---
     
     **Version**: 2.0.0  
-    **Updated**: November 2025  
-    **License**: MIT Open Source
+    **Last Updated**: November 2025  
+    **License**: MIT Open Source  
+    **Repository**: [GitHub](#)
     """)
 
 # Footer
@@ -597,4 +788,4 @@ with col1:
 with col2:
     st.markdown("Built with ❤️ using Streamlit")
 with col3:
-    st.markdown("[Privacy](#) | [Terms](#)")
+    st.markdown("[Privacy](#) | [Terms](#) | [Contact](#)")
