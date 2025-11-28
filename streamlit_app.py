@@ -126,8 +126,10 @@ elif page == "Prediction":
             pred = model.predict(X)[0]
             proba = model.predict_proba(X)[0]
             result = encoder.inverse_transform([pred])[0]
-            confidence = proba[pred] * 100
-            risk = proba[1] * 100
+            
+            # Convert to proper types
+            confidence = float(proba[pred] * 100)
+            risk = float(proba[1] * 100)
             
             # Show results
             st.markdown("---")
@@ -155,17 +157,53 @@ elif page == "Prediction":
                 st.success("**RECOMMENDATION:** Maintain healthy lifestyle and regular checkups!")
             
             # Metrics
+            st.write("### 📊 Detailed Metrics")
             col1, col2, col3 = st.columns(3)
             col1.metric("Risk Level", f"{risk:.1f}%")
             col2.metric("Confidence", f"{confidence:.1f}%")
             col3.metric("Status", "High" if result == "YES" else "Low")
             
-            # Progress bar
-            st.progress(risk/100)
+            # Progress bar with proper value
+            st.write("### 🎯 Risk Visualization")
+            progress_value = float(risk / 100.0)
+            # Ensure value is between 0 and 1
+            progress_value = max(0.0, min(1.0, progress_value))
+            st.progress(progress_value)
+            
+            # Risk breakdown
+            st.write("### 📋 Risk Factors")
+            risk_factors = []
+            if smoking == 'Yes':
+                risk_factors.append("🚬 Smoking")
+            if age > 55:
+                risk_factors.append("👴 Age > 55")
+            if chronic_disease == 'Yes':
+                risk_factors.append("🏥 Chronic Disease")
+            if int(df['RESPIRATORY_SCORE'].values[0]) >= 2:
+                risk_factors.append("🫁 Multiple Respiratory Symptoms")
+            
+            if risk_factors:
+                st.warning("**Present Risk Factors:**")
+                for factor in risk_factors:
+                    st.write(f"• {factor}")
+            else:
+                st.success("✅ No major risk factors detected!")
+            
+            # Feature importance
+            if hasattr(model, 'feature_importances_'):
+                st.write("### 📊 Feature Importance")
+                importance_df = pd.DataFrame({
+                    'Feature': df.columns,
+                    'Importance': model.feature_importances_
+                }).sort_values('Importance', ascending=False).head(10)
+                
+                st.bar_chart(importance_df.set_index('Feature')['Importance'])
             
         except Exception as e:
-            st.error(f"Prediction error: {e}")
+            st.error(f"❌ Prediction error: {str(e)}")
             st.info("Make sure model was trained with same features!")
+            import traceback
+            st.code(traceback.format_exc())
 
 # ABOUT PAGE
 elif page == "About":
@@ -179,6 +217,12 @@ elif page == "About":
     - Accuracy: 87.5%+
     - Features: 20+ clinical factors
     
+    **How It Works:**
+    1. Enter patient data
+    2. AI analyzes 20+ features
+    3. Get instant risk assessment
+    4. Follow recommendations
+    
     **Disclaimer:**
     
     ⚠️ This is NOT a medical diagnosis tool!
@@ -186,8 +230,14 @@ elif page == "About":
     Always consult healthcare professionals for medical advice.
     
     **Contact:** support@lungcancerai.com
+    
+    ---
+    
+    **Version:** 2.0  
+    **Built with:** Streamlit + XGBoost  
+    **License:** MIT
     """)
 
 # Footer
 st.markdown("---")
-st.markdown("© 2025 Lung Cancer AI | Built with Streamlit")
+st.markdown("© 2025 Lung Cancer AI | Built with ❤️ using Streamlit")
